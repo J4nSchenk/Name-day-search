@@ -11,9 +11,9 @@ To search for specirfic name use a GET request on http://localhost:8080/name/{sp
   Gives you a JSON file containing the Id, Name, NameDay and SearchCount of the name you searched
 
 Current searchable names:
-  Jan
-  Tomáš
-  Ondra
-  Lukáš
+  "Jan"
+  "Tomáš"
+  "Ondra"
+  "Lukáš"
   
  
