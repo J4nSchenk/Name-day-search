@@ -1,6 +1,6 @@
 package com.example.names.Service;
 
-import com.example.names.Entity.Name;
+
 import com.example.names.Entity.Nameday;
 import com.example.names.Repository.NamedayRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,37 +20,40 @@ public class NameService {
         this.namedayRepository = namedayRepository;
     }
 
-    public List<Name> getAllNames() {
-        List<Name> names = new ArrayList<>();
+    public List<String> getAllNames() {
         List<Nameday> namedays = namedayRepository.findAll();
 
-        for (Nameday nameday : namedays) {
-            Name name = new Name();
-            name.setName(nameday.getName());
-            name.setDate(nameday.getDate());
-            name.setCount(nameday.getRequestCount());
+        // Create a list to store the names
+        List<String> names = new ArrayList<>();
 
-            names.add(name);
+        // Retrieve all the unique names
+        for (Nameday nameday : namedays) {
+            String nameValue = nameday.getName();
+            if (!names.contains(nameValue)) {
+                names.add(nameValue);
+            }
         }
 
         return names;
     }
-    public Name getName(String name) {
-        Optional<List<Nameday>> namedayOptional = namedayRepository.findByNameIgnoreCase(name);
-        if (namedayOptional.isPresent()) {
-            Nameday nameday = (Nameday) namedayOptional.get();
-            nameday.setRequestCount(nameday.getRequestCount() + 1);
-            namedayRepository.save(nameday);
-
-            Name result = new Name();
-            result.setName(nameday.getName());
-            result.setDate(nameday.getDate());
-            result.setCount(nameday.getRequestCount());
-            return result;
-        } else {
-            throw new IllegalArgumentException("Name was not found");
+    public Nameday getNameday(String name) {
+        Optional<List<Nameday>> namedaysOptional = namedayRepository.findByNameIgnoreCase(name);
+        if (namedaysOptional.isPresent()) {
+            List<Nameday> namedays = namedaysOptional.get();
+            if (!namedays.isEmpty()) {
+                Nameday nameday = namedays.get(0);
+                nameday.setRequestCount(nameday.getRequestCount() + 1);
+                namedayRepository.save(nameday);
+                return nameday;
+            }
         }
+        throw new IllegalArgumentException("Nameday not found for name: " + name);
     }
+
+
+
+
+
 
     public Nameday createNameday(String date, String name) {
         Nameday nameday = new Nameday();

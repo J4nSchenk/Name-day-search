@@ -64,14 +64,10 @@ public class NamesController {
 
     @GetMapping("/name/{name}")
     public ResponseEntity<?> getNameday(@PathVariable("name") String name) {
-        Optional<List<Nameday>> optionalNamedays = namedayRepository.findByNameIgnoreCase(name);
-        if (optionalNamedays.isPresent()) {
-            List<Nameday> namedays = optionalNamedays.get();
-            Nameday nameday = namedays.get(0);
-            nameday.setCount(nameday.getCount() + 1);
-            namedayRepository.save(nameday);
+        try {
+            Nameday nameday = nameService.getNameday(name);
             return ResponseEntity.ok(nameday);
-        } else {
+        } catch (IllegalArgumentException e) {
             String message = "Name not found: " + name;
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
         }
